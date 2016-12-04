@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Melomaniac</title>
+  <link rel="icon" type="image/png" href="images/music.png">
+  <link rel="stylesheet" type="text/css" href="styles/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="styles/sticky-footer.css">
+  <link rel="stylesheet" type="text/css" href="styles/chatroom.css">
+</head>
+<body>
+  <!--- Header start --->
+  <header>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+            <!-- <span class="glyphicon glyphicon-headphones" aria-hidden="true"></span> Melomaniac</a> -->
+            <span aria-hidden="true"></span> Melomaniac</a>
+
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/logout">Logout</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+  </header>
+  <!--- Header end --->
+  <!--- Main start --->
+  <main>
+
+    <!-- ====================================================================-->
+    <div class="container-fluid">
+
+          <div id="login_div">
+          <div class="container container-table">
+            <div class="row vertical-left-row">
+    				<div class="text-center col-md-4 col-md-offset-4">
+              <h2>Welcome to Melomaniac</h2>
+    				  <h3>User Login</h3>
+    				  <div class="panel panel-default">
+    					<div class="panel-body">
+    						<div class="form-group"><label>UserID</label>
+                  <input id = "login_username" class="form-control" type="text" name="username" placeholder="User ID">
+                </div>
+    						<div class="form-group"><label>Password</label>
+                  <input id = "login_password" class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+    						<div class="form-group">
+                  <input data-bind="click: user_login" id="login_submit"type="submit" class="btn btn-primary btn-lg btn-block" value="Login">
+                </div>
+
+                <a data-bind="click: show_user_register"> Not registered? </a>
+
+    					</div>
+    				  </div>
+    				</div>
+    			</div>
+        </div>
+      </div>
+        <!-- ================================================================-->
+        <div id="register_div">
+          <div class="row vertical-right-row">
+            <div class="text-center col-md-4 col-md-offset-4">
+              <h2>Welcome to Melomaniac</h2>
+    				  <h3>Register Below:</h3>
+                <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="form-group"><label>Full Name</label><input id="register_full_name" class="form-control" type="text" name="agent_name"></div>
+                  <div class="form-group"><label>UserID</label><input id="register_username"class="form-control" type="text" name="agent_id"></div>
+                  <div class="form-group"><label>E-mail Address</label><input id="register_email" class="form-control" type="text" name="agent_email"></div>
+                  <div class="form-group"><label>Password</label><input id="register_password" class="form-control" type="password" name="password1"></div>
+                  <div class="form-group"><label>Confirm Password</label><input id="register_confirm_password" class="form-control" type="password" name="password2"></div>
+                  <p><input data-bind="click: user_register" type="submit" class="btn btn-primary btn-lg btn-block" value="Submit"></p>
+
+                  <a data-bind="click: show_user_login"> Back to Login</a>
+
+
+                </div>
+                </div>
+              </div
+            </div>
+        </div>
+        </div>
+        <!-- ====================================================================-->
+        <div id="chat_div" class="container-fluid">
+    		    <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="conversation">
+                            <!-- {{#each messages}}
+                            <p>{{this}}</p>
+                            {{/each}} -->
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <form>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea class="form-control" id="message" rows="20"></textarea>
+                                <a id="submitbutton" class="btn btn-primary form-control">Submit</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+             </div>
+           </div>
+    </div>
+    <!-- ====================================================================-->
+  </main>
+  <!--- Main end --->
+  <!--- Footer Start --->
+  <footer class="footer">
+     <div class="container-fluid">
+       <h5 class="text-center">&copy; 2016 Melomaniac, Inc.</h5>
+     </div>
+  </footer>
+  <!--- Footer end --->
+
+  <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+  <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js'></script>
+  <script src="javascripts/bootstrap.min.js"></script>
+  <script src="javascripts/index.js"></script>
+
+</body>
+</html>
