@@ -68,12 +68,13 @@ io.sockets.on('connection', function(client) {
         console.log('sign in event - username: ' + user.username);
     });
 
-    client.on('new_message', function(message_data){
-      // TODO broacast new message to all other clients, save the message data in Redis?
-      // redis -> save data.
-      // io.emit('new_message_announcement' message_data);
+    client.on('new_chat', function(chat){
+      console.log(chat);
+      // save chat data?
+      // TODO
+      // tell all the clients.
+      io.emit('new_chat_announcement', chat);
     });
-
 
 });
 //==============================================================================

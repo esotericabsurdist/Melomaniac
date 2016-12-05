@@ -103,11 +103,13 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                      <p id = "current_username"> </p>
+                      <br><br>
+                      <label id="current_username" for="chat"></label>
+                      <textarea  data-bind="value: users_chat" readonly="true" class="form-control" id="chat" rows="4"></textarea>
                         <form>
                             <div class="form-group">
-                                <label for="message">Message</label>
-                                <textarea class="form-control" id="message" rows="4"></textarea>
+                                <!-- <label for="message">C</label> -->
+                                <textarea spellcheck="true" class="form-control" id="message" rows="1"></textarea>
                                 <a data-bind="click: submit_chat" id="submitbutton" class="btn btn-primary form-control">Submit</a>
                             </div>
                         </form>

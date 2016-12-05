@@ -9,7 +9,7 @@
 // index.js
 //==============================================================================
 
-
+window.SOCKET = io.connect('http://localhost:4200');
 
 //==============================================================================
 //
@@ -91,10 +91,8 @@ var register = function(){
                 loadChatData();
                 loadMusicPlayer();
 
-                socket = io.connect('http://localhost:4200');
-
                 // tell all the clients that a new user is logged on.
-                socket.emit('new_user_logged_on', {username: login_username});
+                window.SOCKET.emit('new_user_logged_on', {username: login_username});
               }
               else {
                 window.alert("Uh-Oh, looks like your information is incorrect. Please try Again");
@@ -133,7 +131,7 @@ var hideLoginAndRegister = function() {
   document.getElementById('chat_div').style.display = 'block';
   document.getElementById('login_div').style.display = 'none';
   document.getElementById('register_div').style.display = 'none';
-  document.getElementById('current_username').innerHTML = window.USERNAME;
+  document.getElementById('current_username').innerHTML = window.USERNAME + '\'s chat:';
 }
 //==============================================================================
 var showRegisterOnly = function() {
@@ -159,6 +157,8 @@ var sendChat = function(){
   console.log(user_message);
   // clear message
   document.getElementById('message').value = '';
+  // tell the server there is a new chat.
+  window.SOCKET.emit('new_chat', {username: window.USERNAME, message: user_message});
 }
 //==============================================================================
 
@@ -177,8 +177,16 @@ var sendChat = function(){
 //                ********** Socket Listeners **********
 //
 //==============================================================================
-// TODO Any socket updates that we need to update the UI for should go here.
-
+window.SOCKET.on('new_chat_announcement', function(chat){
+  console.log(chat);
+  // get chat handle.
+  var chat_area = document.getElementById('chat');
+  // update the chat box
+  vm.users_chat(chat_area.value + chat.username + ': ' + chat.message + '\n');
+  // scroll to bottom
+  chat_area.scrollTop = chat.scrollHeight;
+});
+//==============================================================================
 
 
 
@@ -192,7 +200,8 @@ var vm = {
   user_register: register,
   show_user_register: showRegisterOnly,
   show_user_login: showUserLoginOnly,
-  submit_chat: sendChat
+  submit_chat: sendChat,
+  users_chat: ko.observable()
 }
 //==============================================================================
 
@@ -211,8 +220,8 @@ var main = function() {
 
   // TODO load other online users.
 
-  // TODO load previous chat messages? Maybe.
-
+  // load previous chat messages? Nah
+  vm.user_chat = '\n';// make it blank.
 
   // TODO load music player/Playlist.
 
