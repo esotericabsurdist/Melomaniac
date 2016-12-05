@@ -8,7 +8,7 @@
 //==============================================================================
 // app.js
 //==============================================================================
-                      /* Define variables */
+              /* Define variables, Modules, DB and other Stuffs*/
 //==============================================================================
 var express = require('express');
 var path = require('path');
@@ -20,15 +20,21 @@ var mongoose = require("mongoose");
 var app = express();
 var clients = [];
 var userList = [];
-mongoose.connect('mongodb://melomaniac:webdev@ds050869.mlab.com:50869/melomaniac');
-var db = mongoose.connection;
+// mongo db server =======
+var User = require('./models/user');
+mongoose.connect('mongodb://localhost/melomaniac', function(err) {
+  if (err) {
+    console.log("Failed connecting to Mongodb!");
+  } else {
+    console.log("Successfully connected to Mongodb!");
+  }
+});
+//mongoose.connect('mongodb://melomaniac:webdev@ds050869.mlab.com:50869/melomaniac');
+//var db = mongoose.connection;
 //socket io server =======
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 server.listen(4200); // listen for socket io traffic on port 4200 since app runs on 3000.
-// mongo server===========
-// mongoose.connect('mongodb://melomaniac:webdev@ds050869.mlab.com:50869/melomaniac');
-// var db = mongoose.connection;
 //==============================================================================
 
 
@@ -98,25 +104,40 @@ app.get('/index', function(req, res){
 //==============================================================================
 app.post('/register', function(req, res){
   var new_user = req.body;
+  console.log('adding user: ');
   console.log(new_user);
 
-  // TODO add user to DB.
-  var register_success = true;
-
-  // tell the client if it was successful or not.
-  res.json({'success': register_success});
+  // Add the user to the DB
+  User.create(new_user, function(err, user){
+    // tell the client if it was successful or not.
+    console.log('creating user');
+    if (err) {
+          return res.status(500).json({err: err.message});
+    }
+    else{
+      console.log('user added: ');
+      console.log(user);
+      return res.json({'success': true, 'username': user.username});
+    }
+  });
 });
 //==============================================================================
 app.post('/login', function(req, res){
-  var user = req.body;
-  console.log(user);
+  // get user name and password
+  var possible_user = req.body;
 
-  // TODO verify user
-  var login_success = true;
-
-  // tell the client if it was successful or not.
-  res.json({'success': login_success});
-
+  // look for one in database where password and user name match.
+  User.findOne({username: possible_user.username, password: possible_user.password}, function(err, user){
+    if (err){
+      // if no match then send false.
+      return res.json({'success': false, 'username': ''});
+    }
+    else{
+      // if match, then pass back success = true and the username.
+      console.log("Successful user logon");
+      return res.json({'success': true, 'username': user.username});
+    }
+  });
 });
 //==============================================================================
 

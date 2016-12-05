@@ -16,8 +16,14 @@
 //            ********** Knockout Referenced Functions *********** Note, some helper functions are also referenced.
 //
 //==============================================================================
+var logout = function(){
+  console.log('logging out...');
+
+}
+
+//==============================================================================
 var login = function(){
-  console.log('loggin in ...')
+  console.log('logging out ...')
   // get the user's login data.
   var login_username = document.getElementById('login_username').value;
   var login_password = document.getElementById('login_password').value;
@@ -34,9 +40,10 @@ var login = function(){
       data: JSON.stringify(user),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
-      success: function(data){
+      success: function(user){
 
-          if(data.success == true){
+          if(user.success == true){
+            window.USERNAME = user.username;
 
             hideLoginAndRegister();
 
@@ -61,43 +68,43 @@ var register = function(){
     var register_password = document.getElementById('register_password').value;
     var register_confirm_password = document.getElementById('register_confirm_password').value;
 
-    // Build a JS object with data.
-    var new_user = {
-      "full_name": register_full_name,
-      "username": register_username,
-      "email": register_email,
-      "password": register_password,
-      "confirm_password": register_confirm_password
+    if(register_password == register_confirm_password){
+      // Build a JS object with data.
+      var new_user = {
+        "full_name": register_full_name,
+        "username": register_username,
+        "email": register_email,
+        "password": register_password
+      }
+
+      // Send post request to web application containing stringified JS object containing user data.
+      $.ajax({
+          url: '/register',
+          type: 'POST',
+          data: JSON.stringify(new_user),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(data){
+
+              if(data.success == true){
+                hideLoginAndRegister();
+                loadChatData();
+                loadMusicPlayer();
+
+                socket = io.connect('http://localhost:4200');
+
+                // tell all the clients that a new user is logged on.
+                socket.emit('new_user_logged_on', {username: login_username});
+              }
+              else {
+                window.alert("Uh-Oh, looks like your information is incorrect. Please try Again");
+              }
+            }
+        });
     }
-
-    // Send post request to web application containing stringified JS object containing user data.
-    $.ajax({
-        url: '/register',
-        type: 'POST',
-        data: JSON.stringify(new_user),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function(data){
-
-            if(data.success == true){
-              hideLoginAndRegister();
-              loadChatData();
-              loadMusicPlayer();
-
-              socket = io.connect('http://localhost:4200');
-
-              // tell all the clients that a new user is logged on.
-              socket.emit('new_user_logged_on', {username: login_username});
-            }
-            else {
-              window.alert("Uh-Oh, looks like your information is incorrect. Please try Again");
-            }
-          }
-      });
-
-    //TODO, Show the chat.
-
-    //TODO, brodcast on a socket the new online user to the server.
+    else{
+      window.alert("Please Make sure that your passwords match.")
+    }
 }
 //==============================================================================
 
@@ -126,6 +133,7 @@ var hideLoginAndRegister = function() {
   document.getElementById('chat_div').style.display = 'block';
   document.getElementById('login_div').style.display = 'none';
   document.getElementById('register_div').style.display = 'none';
+  document.getElementById('current_username').innerHTML = window.USERNAME;
 }
 //==============================================================================
 var showRegisterOnly = function() {
@@ -135,12 +143,24 @@ var showRegisterOnly = function() {
 }
 //==============================================================================
 var loadChatData = function(){
-    // TODO Are we showing previous messages? Let's not for now just to keep it simple.
+  // show other online users:
+  //TODO
+
 }
 //==============================================================================
 var loadMusicPlayer = function(){
-    // TODO display music player/playlist, whatever the music aspect of this application is.
+  //TODO display music player/playlist, whatever the music aspect of this application is.
 }
+//==============================================================================
+var sendChat = function(){
+  // get users message
+  var user_message = document.getElementById('message').value;
+  // log
+  console.log(user_message);
+  // clear message
+  document.getElementById('message').value = '';
+}
+//==============================================================================
 
 
 
@@ -168,9 +188,11 @@ var loadMusicPlayer = function(){
 // This is our View Model that defines our Knockout bindings.
 var vm = {
   user_login: login,
+  user_logout: logout,
   user_register: register,
   show_user_register: showRegisterOnly,
-  show_user_login: showUserLoginOnly
+  show_user_login: showUserLoginOnly,
+  submit_chat: sendChat
 }
 //==============================================================================
 
@@ -190,6 +212,7 @@ var main = function() {
   // TODO load other online users.
 
   // TODO load previous chat messages? Maybe.
+
 
   // TODO load music player/Playlist.
 
