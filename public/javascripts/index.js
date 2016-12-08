@@ -43,7 +43,8 @@ var login = function(){
       success: function(user){
 
           if(user.success == true){
-            window.USERNAME = user.username;
+
+            vm.current_username(user.username);
 
             hideLoginAndRegister();
 
@@ -84,15 +85,16 @@ var register = function(){
           data: JSON.stringify(new_user),
           contentType: "application/json; charset=utf-8",
           dataType: "json",
-          success: function(data){
+          success: function(user){
 
-              if(data.success == true){
+              if(user.success == true){
+                vm.current_username(user.username);
                 hideLoginAndRegister();
                 loadChatData();
                 loadMusicPlayer();
 
                 // tell all the clients that a new user is logged on.
-                window.SOCKET.emit('new_user_logged_on', {username: login_username});
+                window.SOCKET.emit('new_user_logged_on', {username: user.username});
               }
               else {
                 window.alert("Uh-Oh, looks like your information is incorrect. Please try Again");
@@ -131,7 +133,7 @@ var hideLoginAndRegister = function() {
   document.getElementById('chat_div').style.display = 'block';
   document.getElementById('login_div').style.display = 'none';
   document.getElementById('register_div').style.display = 'none';
-  document.getElementById('current_username').innerHTML = window.USERNAME + '\'s chat:';
+  // document.getElementById('current_username').innerHTML = window.USNAME + '\'s chat:';
 }
 //==============================================================================
 var showRegisterOnly = function() {
@@ -141,9 +143,8 @@ var showRegisterOnly = function() {
 }
 //==============================================================================
 var loadChatData = function(){
-  // show other online users:
+  // show other online users or load chat history here. We might not do this.
   //TODO
-
 }
 //==============================================================================
 var loadMusicPlayer = function(){
@@ -153,12 +154,11 @@ var loadMusicPlayer = function(){
 var sendChat = function(){
   // get users message
   var user_message = document.getElementById('message').value;
-  // log
   console.log(user_message);
   // clear message
   document.getElementById('message').value = '';
   // tell the server there is a new chat.
-  window.SOCKET.emit('new_chat', {username: window.USERNAME, message: user_message});
+  window.SOCKET.emit('new_chat', {username: vm.current_username(), message: user_message});
 }
 //==============================================================================
 
@@ -201,8 +201,9 @@ var vm = {
   show_user_register: showRegisterOnly,
   show_user_login: showUserLoginOnly,
   submit_chat: sendChat,
+  current_username: ko.observable(),
   users_chat: ko.observable()
-}
+};
 //==============================================================================
 
 

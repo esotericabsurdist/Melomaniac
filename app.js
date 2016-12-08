@@ -65,11 +65,11 @@ io.sockets.on('connection', function(client) {
 
     // when a user signs in, a join_user broadcast occurs.
     client.on('new_user_logged_on', function(user){
-        console.log('sign in event - username: ' + user.username);
+        console.log('socket message received by app -- new_user_logged_on -- ' + user.username);
     });
 
     client.on('new_chat', function(chat){
-      console.log(chat);
+      console.log('socket message recieved by app -- new_chat -- ' + chat.username + ' : ' + chat.message);
       // save chat data?
       // TODO
       // tell all the clients.
@@ -105,9 +105,6 @@ app.get('/index', function(req, res){
 //==============================================================================
 app.post('/register', function(req, res){
   var new_user = req.body;
-  console.log('adding user: ');
-  console.log(new_user);
-
   // Add the user to the DB
   User.create(new_user, function(err, user){
     // tell the client if it was successful or not.
@@ -116,7 +113,7 @@ app.post('/register', function(req, res){
           return res.status(500).json({err: err.message});
     }
     else{
-      console.log('user added: ');
+      console.log('successful user creation: ');
       console.log(user);
       return res.json({'success': true, 'username': user.username});
     }
