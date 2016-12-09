@@ -172,29 +172,48 @@ var submitTrackQuery = function() {
         type: 'track',
       },
       success: function (response) {
-        // get tracks
+        // get array of tracks
         var tracks = response.tracks.items;
+
+        console.log(response);
 
         // get number of tracks
         var track_count = tracks.length;
 
         // for each track, display it:
         for(var i = 0; i < track_count; i++){
-          
-          console.log(tracks[i].preview_url);
+          //console.log(tracks[i].preview_url);
+          // get handle to list in dom.
 
-          // // get handle to list in dom.
-          // var track_list = document.getElementById('track_list');
-          // // create a new list item for the track.
-          // var track_item = document.createElement('li');
-          // // create a video tag to the list item.
-          // var track_video = document.createElement('video');
-          // // append track data to list item.
-          // track_item.appendChild(track_video);
-          // // append the item to the list.
-          // track_list.appendChild(track_item);
+          var track_list = document.getElementById('track_list');
+          // create a new list item for the track.
+          var track_item = document.createElement('li');
+          // create a video tag to the list item.
+          var track_player = document.createElement('video');
+          // create a source tag.
+          var track_player_source = document.createElement('source');
+          // set the properties of the video/audio tag.
+          track_player_source.src = tracks[i].preview_url;
+          track_player_source.type = 'audio/mpeg';
+          track_player_source.controls = true;
+          track_player_source.name = 'media';
+          // append the souce tag to the audio/video tag
+          track_player.appendChild(track_player_source);
+          // append track data to list item.
+          track_item.appendChild(track_player);
+          // append the item to the list.
+          track_list.appendChild(track_item);
+
+          if( i ==  0 ){
+            track_player.play();
+          }
+
         }
+
+
+
       }
+
     });
 }
 //==============================================================================
