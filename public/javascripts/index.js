@@ -156,11 +156,13 @@ var displayTrackResult = function(track){
   // create a new list item for the track.
   var track_item = document.createElement('li');
 
+  //div containing track details ==========
+  var track_details_div = document.createElement('div');
+  track_details_div.className = 'col-xs-6'; // make div side by side.
   // set track name
   var track_name = document.createElement('p');
   track_name.innerHTML = 'Track: ' + track.name;
-  track_item.appendChild(track_name);
-
+  track_details_div.appendChild(track_name);
   // set the artist(s)
   var artist_name = document.createElement('p');
   artist_name.innerHTML = 'Artist: ';
@@ -169,12 +171,25 @@ var displayTrackResult = function(track){
   for(var i = 0; i < artist_count; i++){
       artist_name.innerHTML += track.artists[i].name + ' ';
   }
-  track_item.appendChild(artist_name);
-
+  track_details_div.appendChild(artist_name);
   // set the album
   var album_name = document.createElement('p');
   album_name.innerHTML = 'Album: ' + track.album.name
-  track_item.appendChild(album_name);
+  track_details_div.appendChild(album_name);
+  // append details to list item.
+  track_item.appendChild(track_details_div);
+  //div containing album img ==============
+  var track_img_div = document.createElement('div');
+  track_img_div.className = 'col-xs-6'; // make div side by side.
+  var track_img = document.createElement('img');
+  track_img.height = 100;
+  track_img.width = 100;
+  // Just use the first image. Perhaps load a default if this does't exist later.
+  track_img.src = track.album.images[0].url;
+  track_img_div.appendChild(track_img);
+  track_item.appendChild(track_img_div);
+  //=======================================
+
 
   // create a audio tag to the list item.
   var track_player = document.createElement('audio');

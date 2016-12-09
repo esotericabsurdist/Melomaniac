@@ -97,9 +97,12 @@
           <div class="container">
             <div class="col-xs-6">
               <br></br>
+              <label for="track_query">Search for a Track</label>
               <input type="text" id="track_query" value="" class="form-control" placeholder="Type a Track Name"></input>
               <a data-bind="click: submit_track_query" class="btn btn-primary form-control">Search</a>
-              <ul id="track_list">
+              <br></br>
+
+              <ul id="track_list" style="list-style-type:none">
                 <!-- Tracks go here -->
               </ul>
             </div>
