@@ -92,7 +92,6 @@ var register = function(){
                 vm.current_username(user.username);
                 hideLoginAndRegister();
                 loadChatData();
-                loadMusicPlayer();
 
                 // tell all the clients that a new user is logged on.
                 window.SOCKET.emit('new_user_logged_on', {username: user.username});
@@ -148,8 +147,50 @@ var loadChatData = function(){
   //TODO
 }
 //==============================================================================
-var loadMusicPlayer = function(){
-  //TODO display music player/playlist, whatever the music aspect of this application is.
+var displayTrackResult = function(track){
+  /*
+      This function recieves a track object and builds a list item with its data.
+      The list item is then appended to the search query track list.
+  */
+  var track_list = document.getElementById('track_list');
+  // create a new list item for the track.
+  var track_item = document.createElement('li');
+
+  // set track name
+  var track_name = document.createElement('p');
+  track_name.innerHTML = 'Track: ' + track.name;
+  track_item.appendChild(track_name);
+
+  // set the artist(s)
+  var artist_name = document.createElement('p');
+  artist_name.innerHTML = 'Artist: ';
+  // There Can be several artists for a track, so check the entire array.
+  var artist_count = track.artists.length;
+  for(var i = 0; i < artist_count; i++){
+      artist_name.innerHTML += track.artists[i].name + ' ';
+  }
+  track_item.appendChild(artist_name);
+
+  // set the album
+  var album_name = document.createElement('p');
+  album_name.innerHTML = 'Album: ' + track.album.name
+  track_item.appendChild(album_name);
+
+  // create a audio tag to the list item.
+  var track_player = document.createElement('audio');
+  // make the controls of the player visible.
+  track_player.setAttribute('controls','controls');
+  // create a source tag.
+  var track_player_source = document.createElement('source');
+  // set the properties of the video/audio tag.
+  track_player_source.src = track.preview_url;
+  track_player_source.type = 'audio/mpeg';
+  // append the souce tag to the audio/video tag
+  track_player.appendChild(track_player_source);
+  // append track data to list item.
+  track_item.appendChild(track_player);
+  // append the item to the list.
+  track_list.appendChild(track_item);
 }
 //==============================================================================
 var sendChat = function(){
@@ -174,47 +215,14 @@ var submitTrackQuery = function() {
       success: function (response) {
         // get array of tracks
         var tracks = response.tracks.items;
-
         console.log(response);
-
         // get number of tracks
         var track_count = tracks.length;
-
         // for each track, display it:
         for(var i = 0; i < track_count; i++){
-          //console.log(tracks[i].preview_url);
-          // get handle to list in dom.
-
-          var track_list = document.getElementById('track_list');
-          // create a new list item for the track.
-          var track_item = document.createElement('li');
-          // create a video tag to the list item.
-          var track_player = document.createElement('audio');
-          // make the controls of the player visible.
-          track_player.setAttribute('controls','controls');
-          // create a source tag.
-          var track_player_source = document.createElement('source');
-          // set the properties of the video/audio tag.
-          track_player_source.src = tracks[i].preview_url;
-          track_player_source.type = 'audio/mpeg';
-          track_player_source.name = 'media'; // this attribute doesn't show up in the Dom for some reason. 
-          // append the souce tag to the audio/video tag
-          track_player.appendChild(track_player_source);
-          // append track data to list item.
-          track_item.appendChild(track_player);
-          // append the item to the list.
-          track_list.appendChild(track_item);
-
-          if( i ==  0 ){
-            track_player.play();
+          displayTrackResult(tracks[i]);
           }
-
         }
-
-
-
-      }
-
     });
 }
 //==============================================================================
