@@ -9,11 +9,12 @@
 // index.js
 //==============================================================================
 
+// as soon as the client loads the page, establish a sockts connection.
 window.SOCKET = io.connect('http://localhost:4200');
 
 //==============================================================================
 //
-//            ********** Knockout Referenced Functions *********** Note, some helper functions are also referenced.
+//********** Knockout Referenced Functions *********** Note, some helper functions are also referenced.
 //
 //==============================================================================
 var logout = function(){
@@ -120,24 +121,24 @@ var register = function(){
 
 //==============================================================================
 //
-//            ********** Helper Functions ***********
+//    ********** Helper Functions, some are knock out referenced. ***********
 //
 //==============================================================================
 var showUserLoginOnly = function() {
-  document.getElementById('chat_div').style.display= 'none';
+  document.getElementById('chat_and_music_div').style.display= 'none';
   document.getElementById('register_div').style.display = 'none';
   document.getElementById('login_div').style.display = 'block';
 }
 //==============================================================================
 var hideLoginAndRegister = function() {
-  document.getElementById('chat_div').style.display = 'block';
+  document.getElementById('chat_and_music_div').style.display = 'block';
   document.getElementById('login_div').style.display = 'none';
   document.getElementById('register_div').style.display = 'none';
   // document.getElementById('current_username').innerHTML = window.USNAME + '\'s chat:';
 }
 //==============================================================================
 var showRegisterOnly = function() {
-  document.getElementById('chat_div').style.display= 'none';
+  document.getElementById('chat_and_music_div').style.display= 'none';
   document.getElementById('register_div').style.display = 'block';
   document.getElementById('login_div').style.display = 'none';
 }
@@ -161,6 +162,25 @@ var sendChat = function(){
   window.SOCKET.emit('new_chat', {username: vm.current_username(), message: user_message});
 }
 //==============================================================================
+var submitTrackQuery = function() {
+  console.log('submitTrackQuery called');
+  var query = document.getElementById('track_query').value;
+  $.ajax({
+      url: 'https://api.spotify.com/v1/search',
+      data: {
+        q: query,
+        type: 'track',
+      },
+      success: function (response) {
+        var num = 0;
+        console.log(response);
+        //console.log(response.tracks.items[0].id);
+      }
+    });
+}
+//==============================================================================
+
+
 
 
 
@@ -200,6 +220,7 @@ var vm = {
   user_register: register,
   show_user_register: showRegisterOnly,
   show_user_login: showUserLoginOnly,
+  submit_track_query: submitTrackQuery,
   submit_chat: sendChat,
   current_username: ko.observable(),
   users_chat: ko.observable()

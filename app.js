@@ -16,7 +16,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongoose = require("mongoose");
+var mongoose = require('mongoose');
+var request = require('request');
 var app = express();
 var clients = [];
 var userList = [];
@@ -29,8 +30,6 @@ mongoose.connect('mongodb://localhost/melomaniac', function(err) {
     console.log("Successfully connected to Mongodb!");
   }
 });
-//mongoose.connect('mongodb://melomaniac:webdev@ds050869.mlab.com:50869/melomaniac');
-//var db = mongoose.connection;
 //socket io server =======
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
@@ -138,6 +137,31 @@ app.post('/login', function(req, res){
   });
 });
 //==============================================================================
+
+
+
+
+
+
+
+//==============================================================================
+
+
+//==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
