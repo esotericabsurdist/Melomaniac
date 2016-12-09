@@ -189,14 +189,15 @@ var submitTrackQuery = function() {
           // create a new list item for the track.
           var track_item = document.createElement('li');
           // create a video tag to the list item.
-          var track_player = document.createElement('video');
+          var track_player = document.createElement('audio');
+          // make the controls of the player visible.
+          track_player.setAttribute('controls','controls');
           // create a source tag.
           var track_player_source = document.createElement('source');
           // set the properties of the video/audio tag.
           track_player_source.src = tracks[i].preview_url;
           track_player_source.type = 'audio/mpeg';
-          track_player_source.controls = true;
-          track_player_source.name = 'media';
+          track_player_source.name = 'media'; // this attribute doesn't show up in the Dom for some reason. 
           // append the souce tag to the audio/video tag
           track_player.appendChild(track_player_source);
           // append track data to list item.
