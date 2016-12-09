@@ -172,9 +172,28 @@ var submitTrackQuery = function() {
         type: 'track',
       },
       success: function (response) {
-        var num = 0;
-        console.log(response);
-        //console.log(response.tracks.items[0].id);
+        // get tracks
+        var tracks = response.tracks.items;
+
+        // get number of tracks
+        var track_count = tracks.length;
+
+        // for each track, display it:
+        for(var i = 0; i < track_count; i++){
+          
+          console.log(tracks[i].preview_url);
+
+          // // get handle to list in dom.
+          // var track_list = document.getElementById('track_list');
+          // // create a new list item for the track.
+          // var track_item = document.createElement('li');
+          // // create a video tag to the list item.
+          // var track_video = document.createElement('video');
+          // // append track data to list item.
+          // track_item.appendChild(track_video);
+          // // append the item to the list.
+          // track_list.appendChild(track_item);
+        }
       }
     });
 }
