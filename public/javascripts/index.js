@@ -219,7 +219,10 @@ var sendChat = function(){
 }
 //==============================================================================
 var submitTrackQuery = function() {
-  console.log('submitTrackQuery called');
+  // clear the old search results.
+  document.getElementById('track_list').innerHTML = '';
+
+  // get new search results.
   var query = document.getElementById('track_query').value;
   $.ajax({
       url: 'https://api.spotify.com/v1/search',
