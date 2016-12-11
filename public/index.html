@@ -105,20 +105,49 @@
               <ul id="track_list" style="list-style-type:none">
                 <!-- Tracks go here -->
               </ul>
+
+
             </div>
 
             <div class="col-xs-6">
                 <div class="col-md-4">
+                  <!-- start of chat window -->
                   <br></br>
                   <label data-bind="text: current_username" for="chat"></label>
                   <textarea  data-bind="value: users_chat" readonly="true" class="form-control" id="chat" rows="4"></textarea>
                       <form>
                         <div class="form-group">
                             <!-- <label for="message">C</label> -->
-                            <textarea spellcheck="true" class="form-control" id="message" rows="1"></textarea>
+                            <textarea spellcheck="true" class="form-control" id="message" placeholder="Type a Message..." rows="1"></textarea>
                             <a data-bind="click: submit_chat" id="submitbutton" class="btn btn-primary form-control">Send</a>
                         </div>
                     </form>
+                    <!-- end of chat window -->
+                    <!-- start of playlist -->
+                    <div>
+                      <audio controls id="playerlist_player">
+                        <source src="" type="audio/mpeg">
+                      </audio>
+
+                      <p>Playlist</p>
+                        <ul data-bind="foreach: playlist" id="online_users">
+                            <li data-bind="text: $data"></li>
+                        </ul>
+
+                      <!-- <table id="playlist">
+                        <tr>
+                          <th>Track</th>
+                          <th>Artists</th>
+                          <th>Album</th>
+                        </tr>
+                        <tr>
+                          <td>Some track name</td>
+                          <td>Some artist name</td>
+                          <td>Germany</td>
+                        </tr>
+                        <table> -->
+                    </div>
+                    <!-- end of playlist -->
                 </div>
             </div>
 

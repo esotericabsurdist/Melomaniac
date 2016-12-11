@@ -12,6 +12,9 @@
 // as soon as the client loads the page, establish a sockts connection.
 window.SOCKET = io.connect('http://localhost:4200');
 
+// cache for search results.
+window.search_cache = new Array();
+
 //==============================================================================
 //
 //********** Knockout Referenced Functions *********** Note, some helper functions are also referenced.
@@ -103,7 +106,7 @@ var register = function(){
         });
     }
     else{
-      window.alert("Please Make sure that your passwords match.")
+      window.alert("Passwords must match.")
     }
 }
 //==============================================================================
@@ -120,7 +123,7 @@ var register = function(){
 
 //==============================================================================
 //
-//    ********** Helper Functions, some are knock out referenced. ***********
+//   ********** Helper Functions, some are knock out referenced. ***********
 //
 //==============================================================================
 var showUserLoginOnly = function() {
@@ -150,7 +153,7 @@ var loadChatData = function(){
 var displayTrackResult = function(track){
   /*
       This function recieves a track object and builds a list item with its data.
-      The list item is then appended to the search query track list.
+      The list item is then appended to the <ul> search query track list.
   */
   var track_list = document.getElementById('track_list');
   // create a new list item for the track.
@@ -189,8 +192,10 @@ var displayTrackResult = function(track){
   track_img_div.appendChild(track_img);
   track_item.appendChild(track_img_div);
   //=======================================
-
-
+  var add_button = document.createElement('button');
+  add_button.value = "Add";
+  track_img_div.appendChild(add_button);
+  //=======================================
   // create a audio tag to the list item.
   var track_player = document.createElement('audio');
   // make the controls of the player visible.
@@ -222,6 +227,9 @@ var submitTrackQuery = function() {
   // clear the old search results.
   document.getElementById('track_list').innerHTML = '';
 
+  // clear the old search cache.
+  window.search_cache = new Array(); // memory leak. should delete all elements instead.
+
   // get new search results.
   var query = document.getElementById('track_query').value;
   $.ajax({
@@ -233,18 +241,28 @@ var submitTrackQuery = function() {
       success: function (response) {
         // get array of tracks
         var tracks = response.tracks.items;
-        console.log(response);
+        //console.log(response);
         // get number of tracks
         var track_count = tracks.length;
         // for each track, display it:
         for(var i = 0; i < track_count; i++){
+          // display track in the search result list.
           displayTrackResult(tracks[i]);
+          // cache the track in case the user wants to add it to the playlist.
+          window.search_cache.push(tracks[i]);
           }
         }
     });
 }
 //==============================================================================
+var addToPlaylist = function(track_index){
+  // add to playlist.
+  console.log('adding track to playlist:');
+  console.log(search_cache[track_index]);
 
+  // TODO send emit message with track data on socket to app that there is a new playlist update.
+}
+//==============================================================================
 
 
 
@@ -272,8 +290,10 @@ window.SOCKET.on('new_chat_announcement', function(chat){
   chat_area.scrollTop = chat.scrollHeight;
 });
 //==============================================================================
-
-
+window.SOCKET.on('new_playlist_announcement', function(playlist){
+  // TODO set new playlist into vm.playlist.
+});
+//==============================================================================
 
 
 
@@ -288,9 +308,14 @@ var vm = {
   submit_track_query: submitTrackQuery,
   submit_chat: sendChat,
   current_username: ko.observable(),
-  users_chat: ko.observable()
+  users_chat: ko.observable(),
+  playlist: ko.observableArray()
 };
 //==============================================================================
+
+
+
+
 
 
 
@@ -305,7 +330,16 @@ var main = function() {
   //Display pop up window that logs them in or signs them up.
   showUserLoginOnly();
 
-  // TODO load other online users.
+  // capture search results' click events.
+  $(document.getElementById("track_list")).on('click', 'button', function(data) {
+    // get the index of the search result.
+    //     this  ->  parent ->  parent  -> index
+    // <button>  ->  <div>  ->  <li>    -> index
+    var track_index = $(this).parent().parent().index();
+
+    // add the selected track to the playlist.
+    addToPlaylist(track_index);
+  });
 
   // load previous chat messages? Nah
   vm.user_chat = '\n';// make it blank.
