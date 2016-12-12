@@ -56,7 +56,7 @@ var login = function(){
             socket = io.connect('http://localhost:4200');
 
             // tell all the clients that a new user is logged on.
-            socket.emit('new_user_logged_on', {username: login_username});
+            socket.emit('new_user', {username: login_username});
           }
           else {
             window.alert("Uh-Oh, looks like your information is incorrect. Please try Again");
@@ -194,7 +194,9 @@ var displayTrackResult = function(track){
   //=======================================
   var add_button = document.createElement('button');
   add_button.value = "Add";
+  add_button.setAttribute('class', 'btn btn-primary form-control')
   track_img_div.appendChild(add_button);
+
   //=======================================
   // create a audio tag to the list item.
   var track_player = document.createElement('audio');
@@ -256,15 +258,16 @@ var submitTrackQuery = function() {
 }
 //==============================================================================
 var addToPlaylist = function(track_index){
-  // add to playlist.
-  console.log('adding track to playlist:');
-  console.log(search_cache[track_index]);
-
-  // TODO send emit message with track data on socket to app that there is a new playlist update.
+  // add to playlist if not already in playlist.
+  var track = search_cache[track_index];
+  // send emit message with track data on socket to app that there is a new playlist update.
+  window.SOCKET.emit('new_track', track);
 }
 //==============================================================================
-
-
+var loadPlaylist = function(){
+  window.SOCKET.emit('no_playlist');
+}
+//==============================================================================
 
 
 
@@ -291,9 +294,20 @@ window.SOCKET.on('new_chat_announcement', function(chat){
 });
 //==============================================================================
 window.SOCKET.on('new_playlist_announcement', function(playlist){
-  // TODO set new playlist into vm.playlist.
+  // empty the list old playlist. This is necessary because observableArrays
+  // only update the view when objects are added or removed, not modified.
+  vm.playlist.removeAll();
+
+  // adding objects 1 at a time so knockout will update. This is annoying!
+  for( var i = 0; i < playlist.length; i++){
+    vm.playlist.push(playlist[i]);
+  }
 });
 //==============================================================================
+
+
+
+
 
 
 
@@ -319,6 +333,7 @@ var vm = {
 
 
 
+
 //==============================================================================
 var main = function() {
 
@@ -336,7 +351,6 @@ var main = function() {
     //     this  ->  parent ->  parent  -> index
     // <button>  ->  <div>  ->  <li>    -> index
     var track_index = $(this).parent().parent().index();
-
     // add the selected track to the playlist.
     addToPlaylist(track_index);
   });
@@ -344,8 +358,29 @@ var main = function() {
   // load previous chat messages? Nah
   vm.user_chat = '\n';// make it blank.
 
-  // TODO load music player/Playlist.
+  // load music player/Playlist.
+  loadPlaylist();
 
+  $(document.getElementById("playlist")).on('click', 'button', function(data) {
+    // get the index of the search result.
+    //     this  ->  parent ->  parent  -> index
+    // <button>  ->  <div>  ->  <li>    -> index
+    var track_index = $(this).parent().parent().index();
+
+    // get track data
+    var track = vm.playlist[track_index];
+
+    // play the selected file.
+    var music_player = document.getElementById("playlist_player")
+
+    // set the audio source
+    music_player.src = track.preview_url;
+
+    // set to play.
+    music_player.setAttribute)("autoplay", "true");
+
+    console.log(vm.playlist[track_index]);
+  });
 
 } // end of main.
 //==============================================================================
