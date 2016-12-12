@@ -22,7 +22,7 @@ window.search_cache = new Array();
 //==============================================================================
 var logout = function(){
   console.log('logging out...');
-
+  showUserLoginOnly();
 }
 
 //==============================================================================
@@ -193,10 +193,9 @@ var displayTrackResult = function(track){
   track_item.appendChild(track_img_div);
   //=======================================
   var add_button = document.createElement('button');
-  add_button.value = "Add";
+  add_button.innerHTML = "Add";
   add_button.setAttribute('class', 'btn btn-primary form-control')
   track_img_div.appendChild(add_button);
-
   //=======================================
   // create a audio tag to the list item.
   var track_player = document.createElement('audio');
@@ -262,10 +261,27 @@ var addToPlaylist = function(track_index){
   var track = search_cache[track_index];
   // send emit message with track data on socket to app that there is a new playlist update.
   window.SOCKET.emit('new_track', track);
+
+  console.log(track);
 }
 //==============================================================================
 var loadPlaylist = function(){
   window.SOCKET.emit('no_playlist');
+}
+//==============================================================================
+var playSelectedTrack = function(track_index){
+  // get track data
+  var track = vm.playlist()[track_index];
+  // play the selected file.
+  var playlist_player_source = document.getElementById("playlist_player_source");
+  // set the audio source
+  playlist_player_source.src = track.preview_url;
+  // force controls to show.
+  var playlist_player = document.getElementById('playlist_player');
+  // load the player
+  playlist_player.load();
+  // play
+  playlist_player.play();
 }
 //==============================================================================
 
@@ -302,8 +318,11 @@ window.SOCKET.on('new_playlist_announcement', function(playlist){
   for( var i = 0; i < playlist.length; i++){
     vm.playlist.push(playlist[i]);
   }
+  console.log(vm.playlist);
 });
 //==============================================================================
+
+
 
 
 
@@ -326,6 +345,7 @@ var vm = {
   playlist: ko.observableArray()
 };
 //==============================================================================
+
 
 
 
@@ -363,23 +383,9 @@ var main = function() {
 
   $(document.getElementById("playlist")).on('click', 'button', function(data) {
     // get the index of the search result.
-    //     this  ->  parent ->  parent  -> index
-    // <button>  ->  <div>  ->  <li>    -> index
     var track_index = $(this).parent().parent().index();
-
-    // get track data
-    var track = vm.playlist[track_index];
-
-    // play the selected file.
-    var music_player = document.getElementById("playlist_player")
-
-    // set the audio source
-    music_player.src = track.preview_url;
-
-    // set to play.
-    music_player.setAttribute)("autoplay", "true");
-
-    console.log(vm.playlist[track_index]);
+    // play the selected song
+    playSelectedTrack(track_index);
   });
 
 } // end of main.

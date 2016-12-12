@@ -83,10 +83,10 @@ io.sockets.on('connection', function(client) {
         console.log("adding new track");
         // tell all the clients.
         io.emit('new_playlist_announcement', master_playlist);
-      }
-      else{
-        console.log("track is already in array");
-      }
+     }
+     else{
+       console.log("track is already in array");
+     }
     });
 
     client.on('no_playlist', function(){
