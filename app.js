@@ -19,8 +19,6 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var request = require('request');
 var app = express();
-var clients = [];
-var userList = [];
 // mongo db server =======
 var User = require('./models/user');
 mongoose.connect('mongodb://localhost/melomaniac', function(err) {
@@ -34,6 +32,9 @@ mongoose.connect('mongodb://localhost/melomaniac', function(err) {
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 server.listen(4200); // listen for socket io traffic on port 4200 since app runs on 3000.
+//==============================================================================
+                          /* Playlist */
+var master_playlist = new Array();
 //==============================================================================
 
 
@@ -63,16 +64,34 @@ io.sockets.on('connection', function(client) {
     console.log('Client connected...');
 
     // when a user signs in, a join_user broadcast occurs.
-    client.on('new_user_logged_on', function(user){
+    client.on('new_user', function(user){
         console.log('socket message received by app -- new_user_logged_on -- ' + user.username);
     });
 
     client.on('new_chat', function(chat){
       console.log('socket message recieved by app -- new_chat -- ' + chat.username + ' : ' + chat.message);
-      // save chat data?
-      // TODO
+      // TODO save chat data
       // tell all the clients.
       io.emit('new_chat_announcement', chat);
+    });
+
+    client.on('new_track', function(track){
+      console.log(track);
+      //  save the track data in local playist array, or maybe make a new schema and persist to mongo later...
+      if( master_playlist.indexOf(track) == -1 ){
+        master_playlist.push(track);
+        console.log("adding new track");
+        // tell all the clients.
+        io.emit('new_playlist_announcement', master_playlist);
+      }
+      else{
+        console.log("track is already in array");
+      }
+    });
+
+    client.on('no_playlist', function(){
+      // tell all the clients.
+      io.emit('new_playlist_announcement', master_playlist);
     });
 
 });
@@ -81,7 +100,6 @@ io.sockets.on('disconnect', function(client) {
     console.log('Client disconnected...');
 });
 //==============================================================================
-
 
 
 
