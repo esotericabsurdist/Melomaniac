@@ -2,7 +2,7 @@
 
 
 To Run:
-'''bash
+'''shell
 mkdir your_path_here/data
 mkdir your_path_here/data/db
 mongod --dbpath your_path_here/data
