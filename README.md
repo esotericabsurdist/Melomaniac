@@ -8,8 +8,8 @@ There is also an instant messaging chat box that is shared among all users. The
 music content is served from Spotify's public API.
 
 ####Requirements:
--node.js
--mongodb
+- node.js
+- mongodb
 
 ####To Run:
 ```shell
@@ -22,10 +22,10 @@ npm start
 ```
 
 ####Bugs and Notes:
--The application will crash if a user attempts to sign in or register in while
+- The application will crash if a user attempts to sign in or register in while
  mongodb is not started.
--Users cannot yet remove tracks from the playlist.
--There is no limit on the number of tracks in the playlist.
--If there are multiple artists for a track, only the first artist will be
+- Users cannot yet remove tracks from the playlist.
+- There is no limit on the number of tracks in the playlist.
+- If there are multiple artists for a track, only the first artist will be
 displayed in the playlist listing.
--index.html features a mixture of bootstrap and other formatting techniques.
+- index.html features a mixture of bootstrap and other formatting techniques.
